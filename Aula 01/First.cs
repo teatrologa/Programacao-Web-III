@@ -5,7 +5,7 @@ namespace Aula_01
 {
     public class First
     {
-        private string Cpf { get; set; }
+        public string Cpf { get; set; }
         public string Name { get; set; }
         public DateTime Nascimento { get; set; }
         public int Idade => (DateTime.Now.Year - Nascimento.Year);
