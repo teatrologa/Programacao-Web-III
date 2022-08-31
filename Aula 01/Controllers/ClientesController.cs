@@ -73,7 +73,7 @@ namespace Aula_01.Controllers
         }
 
 
-        [HttpGet("Info/Index")]
+        [HttpGet("{index}/Info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Cliente>> Info(int index)
@@ -87,7 +87,7 @@ namespace Aula_01.Controllers
         }
 
 
-        [HttpGet("Info/CPF")]
+        [HttpGet("{cpf}/View")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Cliente>> Info (string cpf)
@@ -117,7 +117,7 @@ namespace Aula_01.Controllers
         }
 
 
-        [HttpPut("Atualizacao")]
+        [HttpPut("{index}/Atualizar")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         public IActionResult Atualizacao(int index, Cliente cliente)
@@ -134,7 +134,7 @@ namespace Aula_01.Controllers
         }
 
 
-        [HttpDelete("Deletar/Registro")]
+        [HttpDelete("{index}/Deletar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Cliente>> Deletar(int index)
