@@ -50,60 +50,103 @@ namespace Aula_01.Controllers
             _logger = logger;
             clientes = Enumerable.Range(1, listName.Count).Select(index => new Cliente
             {
-                Cpf = listCpf[Random.Shared.Next(listCpf.Count)],
-                Name = listName[Random.Shared.Next(listCpf.Count)],
-                Nascimento = RandomDay()
+                //Cpf = listCpf[Random.Shared.Next(listCpf.Count)],
+                Cpf = Convert.ToString("000000000-" + index),
+                Name = listName[index -1],
+                Nascimento = RandomDay() //Toda e qualquer chamada ela traz nascimentos variados. GetAll != GetCPF != GetIndex
             })
             .ToList();
         }
 
 
 
-        [HttpGet("/clientes/index/Info")]
+        [HttpGet("Registros")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<List<Cliente>> AllCliente()
+        {
+            if (clientes == null)
+            {
+                return NoContent();
+            }
+            return Ok(clientes);
+        }
+
+
+        [HttpGet("Info/Index")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Cliente>> Info(int index)
         {
-            if (index > clientes.Count - 1)
-            {
-                return NotFound();
-            }
-            return Ok(clientes[index]);
-        }
-
-        [HttpPost("/clientes/index/NovoCliente")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public ActionResult<Cliente> NovoCadastro([FromBody]Cliente cliente)
-        {
-            clientes.Add(cliente);
-            return StatusCode(201, cliente);
-        }
-
-        [HttpPut("/clientes/index/Atualização")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
-        public ActionResult Atualizacao(int index, Cliente cliente)
-        {
-            if (index > clientes.Count - 1)
-            {
-                return NotFound();
-            }
-            clientes[index] = cliente;
-            return Ok(clientes[index]);
-        }
-
-
-        [HttpDelete("/clientes/index/DeletarCadastro")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult Deletar(int index)
-        {
+            index = index - 1;
             if (index > clientes.Count - 1 || index < 0)
             {
                 return NotFound();
             }
             return Ok(clientes[index]);
+        }
+
+
+        [HttpGet("Info/CPF")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<List<Cliente>> Info (string cpf)
+        {
+            var clienteEscolhido = clientes.Where(n => n.Cpf == cpf).ToList();
+            if (clienteEscolhido.Any())
+            {
+                return Ok(clienteEscolhido);
+            }
+            return NotFound();
+        }
+
+
+        [HttpPost("Novo")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Cliente> NovoCadastro([FromBody]Cliente cliente)
+        {
+            clientes.Add(cliente);
+            var teste = clientes.Contains(cliente);
+            if (teste == true)
+            {
+                //return Created(nameof(Atualizacao), cliente); //Teste que precisa ser entendido melhor.
+                return StatusCode(201, cliente);
+            }
+            return BadRequest("Não foi possível criar um registro para esse cliente.");
+        }
+
+
+        [HttpPut("Atualizacao")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public IActionResult Atualizacao(int index, Cliente cliente)
+        //Testando o uso de uma interface de resposta, ela aceita qualquer tipo de retorno, sem especificação
+        {
+            index = index - 1;
+            if (index > clientes.Count || index < 0)
+            {
+                return NotFound();
+            }
+            clientes[index] = cliente;
+            //return Ok(clientes[index]); //Caso use o Ok como resposta.
+            return Accepted(clientes[index]);
+        }
+
+
+        [HttpDelete("Deletar/Registro")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<List<Cliente>> Deletar(int index)
+        {
+            index = index - 1;
+            if (index > clientes.Count || index < 0)
+            {
+                return NotFound();
+            }
             clientes.RemoveAt(index);
+            return Ok(clientes);
+            
         }
 
 
