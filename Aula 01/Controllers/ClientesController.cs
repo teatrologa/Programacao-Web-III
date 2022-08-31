@@ -101,7 +101,7 @@ namespace Aula_01.Controllers
         }
 
 
-        [HttpPost("Novo")]
+        [HttpPost("Registrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Cliente> NovoCadastro([FromBody]Cliente cliente)
@@ -120,6 +120,7 @@ namespace Aula_01.Controllers
         [HttpPut("{index}/Atualizar")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Atualizacao(int index, Cliente cliente)
         //Testando o uso de uma interface de resposta, ela aceita qualquer tipo de retorno, sem especificação
         {
