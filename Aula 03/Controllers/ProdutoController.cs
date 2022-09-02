@@ -20,6 +20,14 @@ namespace Aula_03.Controllers
             _repositoryProduto = new ProdutoRepository(configuration);
         }
 
+        [HttpGet("/produto")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<Produto>> GetProdutos()
+        {
+            var allProdutos = _repositoryProduto.GetProdutos();
+            return Ok(allProdutos);
+        }
+
         [HttpGet("/produto/{descricao}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -32,14 +40,6 @@ namespace Aula_03.Controllers
                 return NotFound();
             }
             return Ok(produtos);
-        }
-
-        [HttpGet("/produto")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<Produto>> GetProdutos()
-        {
-            var allProdutos = _repositoryProduto.GetProdutos();
-            return Ok(allProdutos);
         }
 
         [HttpPost]
@@ -66,11 +66,12 @@ namespace Aula_03.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateProduto(long id, Produto produto)
         {
-            var produtos = ProdutoList;
-            if (produtos == null)
+            if (!_repositoryProduto.UpdateProduto(id, produto))
+            {
                 return NotFound();
-
-            return NoContent();
+            }
+            _repositoryProduto.UpdateProduto(id, produto);
+            return Accepted();
         }
 
         [HttpDelete]

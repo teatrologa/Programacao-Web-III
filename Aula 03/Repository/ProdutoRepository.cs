@@ -27,6 +27,19 @@ namespace Aula_03.Repository
             //retunr nomeVar;
         }
 
+        public Produto GetProduto(string descricao)
+        {
+            var query = "SELECT * FROM Produtos WHERE descricao = @descricao";
+            var parameters = new DynamicParameters(new
+            {
+                descricao
+            });
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<Produto>(query, parameters);
+        }
+
         public bool InsertProduto(Produto produto)
         {
             var query = "INSERT INTO Produtos VALUES (@descricao, @preco, @quantidade)";
@@ -35,6 +48,17 @@ namespace Aula_03.Repository
             parameters.Add("descricao", produto.Descricao);
             parameters.Add("preco", produto.Preco);
             parameters.Add("quantidade", produto.Quantidade);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Execute(query, parameters) == 1;
+        }
+
+        public bool UpdateProduto(long id, Produto produto)
+        {
+            var query = @"UPDATE Produtos SET descricao = @descricao, preco = @preco, quantidade = @quantidade WHERE id = @id";
+            produto.Id = id;
+            var parameters = new DynamicParameters(produto); //Dynamic faz todas as atualizações :)
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
