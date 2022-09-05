@@ -1,5 +1,5 @@
-﻿using Aula_03.Models;
-using Aula_03.Repository;
+﻿using Aula_03_Core.Interface;
+using Aula_03_Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,19 +12,21 @@ namespace Aula_03.Controllers
     public class ProdutoController : ControllerBase
     {
         
-        public ProdutoRepository _repositoryProduto;
-        public List<Produto> ProdutoList { get; set; }
-        public ProdutoController(IConfiguration configuration)
+        public IProdutoService _produtoService;
+
+        //public List<Produto> ProdutoList { get; set; }
+
+        public ProdutoController(IProdutoService produtoservice)
         {
-            ProdutoList = new List<Produto>();
-            _repositoryProduto = new ProdutoRepository(configuration);
+            //ProdutoList = new List<Produto>();
+            _produtoService = produtoservice;
         }
 
         [HttpGet("/produto")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<List<Produto>> GetProdutos()
         {
-            var allProdutos = _repositoryProduto.GetProdutos();
+            var allProdutos = _produtoService.ConsultarProdutos();
             return Ok(allProdutos);
         }
 
@@ -34,7 +36,7 @@ namespace Aula_03.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Produto> GetProduto(string descricao)
         {
-            var produtos = ProdutoList;
+            var produtos = _produtoService.ConsultarProduto(descricao);
             if (produtos == null)
             {
                 return NotFound();
@@ -48,7 +50,7 @@ namespace Aula_03.Controllers
         public ActionResult<Produto> InsertProduto(Produto produto)
         {
 
-            if (!_repositoryProduto.InsertProduto(produto))
+            if (!_produtoService.NovoProduto(produto))
             {
                 return BadRequest();
             }
@@ -66,11 +68,11 @@ namespace Aula_03.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateProduto(long id, Produto produto)
         {
-            if (!_repositoryProduto.UpdateProduto(id, produto))
+            if (!_produtoService.AtualizarProduto(id, produto))
             {
                 return NotFound();
             }
-            _repositoryProduto.UpdateProduto(id, produto);
+            _produtoService.AtualizarProduto(id, produto);
             return Accepted();
         }
 
@@ -80,10 +82,11 @@ namespace Aula_03.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Produto>> DeleteProduto(long id)
         {
-            if (!_repositoryProduto.DeleteProduto(id))
+            if (!_produtoService.DeletarProduto(id))
             {
                 return NotFound();
             }
+            _produtoService.DeletarProduto(id);
             return NoContent();
         }
     }

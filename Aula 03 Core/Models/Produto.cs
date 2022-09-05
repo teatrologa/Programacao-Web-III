@@ -1,4 +1,4 @@
-﻿namespace Aula_03.Models
+﻿namespace Aula_03_Core.Models
 {
     public class Produto
     {
