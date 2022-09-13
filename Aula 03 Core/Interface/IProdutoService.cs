@@ -8,6 +8,8 @@ namespace Aula_03_Core.Interface
 
         public Produto ConsultarProduto(string descricao);
 
+        public Produto ConsultarIdProduto(long id);
+
         public bool NovoProduto(Produto novoProduto);
 
         public bool AtualizarProduto(long id, Produto produto);

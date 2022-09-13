@@ -13,7 +13,9 @@ namespace Aula_03_Core.Interface
 
         public Produto GetProduto(string descricao);
 
-        public bool UpdateProduto(long id, Produto produto);
+        public Produto GetIdProduto(long id);
+
+        public bool UpdateProduto(Produto produto);
 
         public bool InsertProduto(Produto produto);
 

@@ -37,7 +37,20 @@ namespace Aula_03_Infra_Data.Ropository
 
             return conn.QueryFirstOrDefault<Produto>(query, parameters);
         }
-        
+        public Produto GetIdProduto(long id)
+        {
+            var query = "SELECT * FROM Produtos where id = @id";
+
+            var parameters = new DynamicParameters(new
+            {
+                id
+            });
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<Produto>(query, parameters);
+        }
+
         public bool InsertProduto(Produto produto)
         {
             var query = "INSERT INTO Produtos VALUES (@descricao, @preco, @quantidade)";
@@ -66,13 +79,13 @@ namespace Aula_03_Infra_Data.Ropository
             return conn.Execute(query, parameters) == 1;
         }
         
-        public bool UpdateProduto(long id, Produto produto)
+        public bool UpdateProduto(Produto produto)
         {
             var query = @"UPDATE Produtos set descricao = @descricao,
                           preco = @preco, quantidade = @quantidade
                           where id = @id";
 
-            produto.Id = id;
+            //produto.Id = id;
             var parameters = new DynamicParameters(produto);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
